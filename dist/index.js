@@ -34828,6 +34828,7 @@ function getRequiredStringInput(name) {
     return core.getInput(name, { required: true });
 }
 function getInputs() {
+    var _a, _b, _c, _d, _e, _f, _g;
     const ifNoFilesFound = core.getInput(Inputs.IfNoFilesFound);
     const noFileBehavior = NoFileOptions[ifNoFilesFound];
     if (!noFileBehavior) {
@@ -34837,16 +34838,16 @@ function getInputs() {
         searchPath: getRequiredStringInput(Inputs.Path),
         ifNoFilesFound: noFileBehavior,
         retentionDays: getNumberInput(Inputs.RetentionDays),
-        releaseRepository: getStringInput(Inputs.ReleaseRepository) || external_process_namespaceObject.env.GITHUB_REPOSITORY || "",
-        githubToken: external_process_namespaceObject.env.GITHUB_TOKEN || "",
-        githubRef: external_process_namespaceObject.env.GITHUB_REF || "",
-        createRelease: getBooleanInput(Inputs.CreateRelease) || false,
+        releaseRepository: (_b = (_a = getStringInput(Inputs.ReleaseRepository)) !== null && _a !== void 0 ? _a : external_process_namespaceObject.env.GITHUB_REPOSITORY) !== null && _b !== void 0 ? _b : "",
+        githubToken: (_c = external_process_namespaceObject.env.GITHUB_TOKEN) !== null && _c !== void 0 ? _c : "",
+        githubRef: (_d = external_process_namespaceObject.env.GITHUB_REF) !== null && _d !== void 0 ? _d : "",
+        createRelease: (_e = getBooleanInput(Inputs.CreateRelease)) !== null && _e !== void 0 ? _e : false,
         releaseName: getStringInput(Inputs.ReleaseName),
         releaseTagName: getStringInput(Inputs.ReleaseTagName),
         releaseBody: getStringInput(Inputs.ReleaseBody),
         releaseBodyPath: getStringInput(Inputs.ReleaseBodyPath),
-        releaseIsDraft: getBooleanInput(Inputs.ReleaseIsDraft) || false,
-        releaseIsPrerelease: getBooleanInput(Inputs.ReleaseIsPrerelease) || false,
+        releaseIsDraft: (_f = getBooleanInput(Inputs.ReleaseIsDraft)) !== null && _f !== void 0 ? _f : false,
+        releaseIsPrerelease: (_g = getBooleanInput(Inputs.ReleaseIsPrerelease)) !== null && _g !== void 0 ? _g : false,
     };
 }
 function releaseBody(inputs) {

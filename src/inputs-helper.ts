@@ -56,16 +56,16 @@ export function getInputs(): ActionInputs {
         searchPath: getRequiredStringInput(Inputs.Path),
         ifNoFilesFound: noFileBehavior,
         retentionDays: getNumberInput(Inputs.RetentionDays),
-        releaseRepository: getStringInput(Inputs.ReleaseRepository) || env.GITHUB_REPOSITORY || "",
-        githubToken: env.GITHUB_TOKEN || "",
-        githubRef: env.GITHUB_REF || "",
-        createRelease: getBooleanInput(Inputs.CreateRelease) || false,
+        releaseRepository: getStringInput(Inputs.ReleaseRepository) ?? env.GITHUB_REPOSITORY ?? "",
+        githubToken: env.GITHUB_TOKEN ?? "",
+        githubRef: env.GITHUB_REF ?? "",
+        createRelease: getBooleanInput(Inputs.CreateRelease) ?? false,
         releaseName: getStringInput(Inputs.ReleaseName),
         releaseTagName: getStringInput(Inputs.ReleaseTagName),
         releaseBody: getStringInput(Inputs.ReleaseBody),
         releaseBodyPath: getStringInput(Inputs.ReleaseBodyPath),
-        releaseIsDraft: getBooleanInput(Inputs.ReleaseIsDraft) || false,
-        releaseIsPrerelease: getBooleanInput(Inputs.ReleaseIsPrerelease) || false,
+        releaseIsDraft: getBooleanInput(Inputs.ReleaseIsDraft) ?? false,
+        releaseIsPrerelease: getBooleanInput(Inputs.ReleaseIsPrerelease) ?? false,
     }
 }
 
