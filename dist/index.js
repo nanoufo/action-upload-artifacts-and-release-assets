@@ -34957,14 +34957,14 @@ const asset = (path) => {
         name: (0,external_path_.basename)(path),
         mime: mimeOrDefault(path),
         size: (0,external_fs_.lstatSync)(path).size,
-        file: (0,external_fs_.readFileSync)(path)
+        data: (0,external_fs_.readFileSync)(path)
     };
 };
 const mimeOrDefault = (path) => {
     return (0,mime.getType)(path) || "application/octet-stream";
 };
 const upload = (gh, url, path) => releaser_awaiter(void 0, void 0, void 0, function* () {
-    let { name, size, mime, file } = asset(path);
+    let { name, size, mime, data } = asset(path);
     console.log(`⬆️ Uploading ${name}...`);
     return yield gh.repos.uploadReleaseAsset({
         url,
@@ -34973,7 +34973,7 @@ const upload = (gh, url, path) => releaser_awaiter(void 0, void 0, void 0, funct
             "content-type": mime
         },
         name,
-        file
+        data
     });
 });
 const release = (inputs, releaser) => releaser_awaiter(void 0, void 0, void 0, function* () {
