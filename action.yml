@@ -22,6 +22,30 @@ inputs:
       Minimum 1 day.
       Maximum 90 days unless changed from the repository settings page.
     required: false
+  create-release:
+    description: Whether to create a release
+    required: false
+  release-repository:
+    description: Repository to create release for
+    required: false
+  release-name:
+    description: Name of a created release
+    required: false
+  release-tag-name:
+    description: Tag of a created release
+    required: false
+  release-body:
+    description: Body of a created release
+    required: false
+  release-body-path:
+    description: Path to file with a body of a created release
+    required: false
+  release-is-draft:
+    description: Whether a release is a draft
+    required: false
+  release-is-prerelease:
+    description: Whether a release is a prerelease
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'

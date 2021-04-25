@@ -1,18 +1,18 @@
 import {NoFileOptions} from './constants'
 
 export interface ActionInputs {
-    /**
-     * The search path used to describe what to upload as part of the artifact
-     */
+    githubToken: string
+    githubRef: string
+
     searchPath: string
-
-    /**
-     * The desired behavior if no files are found with the provided search path
-     */
     ifNoFilesFound: NoFileOptions
-
-    /**
-     * Duration after which artifact will expire in days
-     */
-    retentionDays: number
+    retentionDays: number|undefined
+    createRelease: boolean
+    releaseRepository: string
+    releaseName: string|undefined
+    releaseIsPrerelease: boolean
+    releaseIsDraft: boolean
+    releaseBodyPath: string|undefined
+    releaseBody: string|undefined
+    releaseTagName: string|undefined
 }
