@@ -79,6 +79,8 @@ async function main(): Promise<void> {
                 core.info(`🎉 Release ready at ${rel.html_url}`);
                 setOutput("release_url", rel.html_url);
                 setOutput("release_upload_url", rel.upload_url);
+            } else {
+                core.info("Skipping release creation")
             }
         }
     } catch (error) {
