@@ -34800,10 +34800,10 @@ function getBooleanInput(name) {
     if (value === undefined) {
         return undefined;
     }
-    if (value === 'true') {
+    if (value === "true") {
         return true;
     }
-    else if (value === 'false') {
+    else if (value === "false") {
         return false;
     }
     else {
@@ -34879,7 +34879,7 @@ function getDefaultGlobOptions() {
     return {
         followSymbolicLinks: true,
         implicitDescendants: true,
-        omitBrokenSymbolicLinks: true
+        omitBrokenSymbolicLinks: true,
     };
 }
 function findFilesToUpload(searchPath, globOptions) {
@@ -34888,9 +34888,9 @@ function findFilesToUpload(searchPath, globOptions) {
         const globber = yield glob.create(searchPath, globOptions || getDefaultGlobOptions());
         const rawSearchResults = yield globber.glob();
         /*
-          Directories will be rejected if attempted to be uploaded. This includes just empty
-          directories so filter any directories out from the raw search results
-        */
+            Directories will be rejected if attempted to be uploaded. This includes just empty
+            directories so filter any directories out from the raw search results
+          */
         for (const searchResult of rawSearchResults) {
             const fileStats = yield stats(searchResult);
             // isDirectory() returns false for symlinks if using fs.lstat(), make sure to use fs.stat() instead
@@ -34958,7 +34958,7 @@ const asset = (path) => {
         name: (0,external_path_.basename)(path),
         mime: mimeOrDefault(path),
         size: (0,external_fs_.lstatSync)(path).size,
-        data: (0,external_fs_.readFileSync)(path)
+        data: (0,external_fs_.readFileSync)(path),
     };
 };
 const mimeOrDefault = (path) => {
@@ -34971,10 +34971,10 @@ const upload = (gh, url, path) => releaser_awaiter(void 0, void 0, void 0, funct
         url,
         headers: {
             "content-length": size,
-            "content-type": mime
+            "content-type": mime,
         },
         name,
-        data
+        data,
     });
 });
 const release = (inputs, releaser) => releaser_awaiter(void 0, void 0, void 0, function* () {
@@ -34988,10 +34988,10 @@ const release = (inputs, releaser) => releaser_awaiter(void 0, void 0, void 0, f
             try {
                 for (var _b = __asyncValues(releaser.allReleases({
                     owner,
-                    repo
+                    repo,
                 })), _c; _c = yield _b.next(), !_c.done;) {
                     const response = _c.value;
-                    let release = response.data.find(release => release.tag_name === tag);
+                    let release = response.data.find((release) => release.tag_name === tag);
                     if (release) {
                         return release;
                     }
@@ -35008,7 +35008,7 @@ const release = (inputs, releaser) => releaser_awaiter(void 0, void 0, void 0, f
         let existingRelease = yield releaser.getReleaseByTag({
             owner,
             repo,
-            tag
+            tag,
         });
         const release_id = existingRelease.data.id;
         const target_commitish = existingRelease.data.target_commitish;
@@ -35026,7 +35026,7 @@ const release = (inputs, releaser) => releaser_awaiter(void 0, void 0, void 0, f
             name,
             body,
             draft,
-            prerelease
+            prerelease,
         });
         return release.data;
     }
@@ -35046,7 +35046,7 @@ const release = (inputs, releaser) => releaser_awaiter(void 0, void 0, void 0, f
                     name,
                     body,
                     draft,
-                    prerelease
+                    prerelease,
                 });
                 return release.data;
             }
@@ -35105,13 +35105,13 @@ function main() {
                 }
             }
             else {
-                const s = filesToUpload.length === 1 ? '' : 's';
+                const s = filesToUpload.length === 1 ? "" : "s";
                 core.info(`With the provided path, there will be ${filesToUpload.length} file${s} uploaded`);
                 /* Upload artifacts */
                 const artifactClient = (0,artifact_client/* create */.U)();
                 const options = {
                     continueOnError: false,
-                    retentionDays: inputs.retentionDays
+                    retentionDays: inputs.retentionDays,
                 };
                 for (const file of filesToUpload) {
                     const rootDirectory = (0,external_path_.dirname)(file);
@@ -35122,7 +35122,7 @@ function main() {
                 if (inputs.createRelease) {
                     github.GitHub.plugin([
                         __nccwpck_require__(9968),
-                        __nccwpck_require__(6298)
+                        __nccwpck_require__(6298),
                     ]);
                     const gh = new github.GitHub(inputs.githubToken, {
                         throttle: {
@@ -35137,8 +35137,8 @@ function main() {
                             onAbuseLimit: (retryAfter, options) => {
                                 // does not retry, only logs a warning
                                 core.warning(`Abuse detected for request ${options.method} ${options.url}`);
-                            }
-                        }
+                            },
+                        },
                     });
                     let rel = yield release(inputs, new GitHubReleaser(gh));
                     for (const path of filesToUpload) {
