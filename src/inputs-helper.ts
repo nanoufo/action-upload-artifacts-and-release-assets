@@ -1,7 +1,6 @@
 import * as core from "@actions/core";
 import { ActionInputs } from "./action-inputs";
 import { Inputs, NoFileOptions } from "./constants";
-import { readFileSync } from "fs";
 import { env } from "process";
 
 function getBooleanInput(name: string): boolean | undefined {
@@ -9,9 +8,11 @@ function getBooleanInput(name: string): boolean | undefined {
   if (value === undefined) {
     return undefined;
   }
-  if (value === "true") {
+  const trueValues = ["true", "yes", "on"];
+  const falseValues = ["false", "no", "off"];
+  if (trueValues.indexOf(value.toLowerCase()) >= 0) {
     return true;
-  } else if (value === "false") {
+  } else if (falseValues.indexOf(value.toLowerCase()) >= 0) {
     return false;
   } else {
     throw Error(`Bad boolean value: ${value}`);
@@ -43,37 +44,31 @@ export function getInputs(): ActionInputs {
   const noFileBehavior: NoFileOptions = NoFileOptions[ifNoFilesFound];
 
   if (!noFileBehavior) {
-    core.setFailed(
-      `Unrecognized ${
-        Inputs.IfNoFilesFound
-      } input. Provided: ${ifNoFilesFound}. Available options: ${Object.keys(
-        NoFileOptions
-      )}`
+    throw Error(
+      `Unrecognized ${Inputs.IfNoFilesFound} input: ${ifNoFilesFound}`
     );
   }
 
-  return {
+  const inputs: ActionInputs = {
+    githubToken: env.GITHUB_TOKEN,
     searchPath: getRequiredStringInput(Inputs.Path),
     ifNoFilesFound: noFileBehavior,
     retentionDays: getNumberInput(Inputs.RetentionDays),
-    releaseRepository:
-      getStringInput(Inputs.ReleaseRepository) ?? env.GITHUB_REPOSITORY ?? "",
-    githubToken: env.GITHUB_TOKEN ?? "",
-    githubRef: env.GITHUB_REF ?? "",
-    createRelease: getBooleanInput(Inputs.CreateRelease) ?? false,
-    releaseName: getStringInput(Inputs.ReleaseName),
-    releaseTagName: getStringInput(Inputs.ReleaseTagName),
-    releaseBody: getStringInput(Inputs.ReleaseBody),
-    releaseBodyPath: getStringInput(Inputs.ReleaseBodyPath),
-    releaseIsDraft: getBooleanInput(Inputs.ReleaseIsDraft) ?? false,
-    releaseIsPrerelease: getBooleanInput(Inputs.ReleaseIsPrerelease) ?? false,
+    releaseUploadUrl: getStringInput(Inputs.ReleaseUploadUrl),
+    uploadReleaseFiles: getBooleanInput(Inputs.UploadReleaseFiles) ?? false,
   };
-}
 
-export function releaseBody(inputs: ActionInputs): string | undefined {
-  return (
-    (inputs.releaseBodyPath &&
-      readFileSync(inputs.releaseBodyPath).toString("utf8")) ||
-    inputs.releaseBody
-  );
+  if (inputs.uploadReleaseFiles) {
+    if (inputs.githubToken === undefined) {
+      throw Error(
+        `${Inputs.UploadReleaseFiles} is true but GITHUB_TOKEN is not provided`
+      );
+    } else if (inputs.releaseUploadUrl === undefined) {
+      throw Error(
+        `${Inputs.UploadReleaseFiles} is true but ${Inputs.ReleaseUploadUrl} is not provided`
+      );
+    }
+  }
+
+  return inputs;
 }

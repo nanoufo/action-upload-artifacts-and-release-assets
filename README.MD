@@ -15,23 +15,18 @@ Passing `GITHUB_TOKEN` is required for a release but is optional for artifact up
           path: |
             x.txt
             y.txt
-          create-release: true
+          upload-release-files: true
+          release-upload-url: <UPLOAD URL HERE>
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Inputs
-`boolean` values must be either `true` or `false`.
+`boolean` values are case-insensitive and must be either `true`/`yes`/`on` or `false`/`no`/`off`.
 
 | Name | Type | Description |
 | ---- | ---  | ----------- |
 | path | string | _Required_. List of globs that match uploaded files, separated by a newline. Each file that is matched by a glob is uploaded individually, directories are ignored. |
-| if-no-files-found | enum (warn/error/ignore) | Strategy to use where there are no files to upload. Default is `warn`. |
-| create-release  | boolean | Whether to create release. If `false`, only artifacts will be uploaded. Default is `false`.|
-| release-repository  | string | Repository to create release for in format `username/reponame`. Default is current repository name. |
-| release-name  | string | Name of a release. Default is tag name. |
-| release-tag-name  | string | Name of a release tag. Default is current tag or `refs/heads/branch`. |
-| release-body  | string | Content of a release body.  |
-| release-body-path  | string | Path to file with a content of release body. |
-| release-is-draft  | boolean | Whether a created release is a draft. Default is `false`. |
-| release-is-prerelease  | boolean | Whether a created release is a prerelease. Default is `false`. |
+| if-no-files-found | enum (warn/error/ignore) | Strategy to use where there are no files to upload at least for one line of the path. Default is `warn`. |
+| upload-release-files  | boolean | Whether to upload files to release. If `false`, only artifacts will be uploaded. Default is `false`. |
+| release-upload-url  | string | URL to use to upload release files. |

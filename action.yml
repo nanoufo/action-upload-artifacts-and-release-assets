@@ -1,5 +1,5 @@
-name: 'Upload artifacts and optionally release'
-description: 'Upload each file individually as an artifact, optionally create a release'
+name: 'Upload files'
+description: 'Upload each file individually as an artifact or as a release file'
 author: 'Artur Samarin'
 inputs:
   path:
@@ -7,7 +7,7 @@ inputs:
     required: true
   if-no-files-found:
     description: >
-      The desired behavior if no files are found using the provided path.
+      The desired behavior if no files are found for any glob of the provided path.
 
       Available Options:
         warn: Output a warning but do not fail the action
@@ -22,29 +22,12 @@ inputs:
       Minimum 1 day.
       Maximum 90 days unless changed from the repository settings page.
     required: false
-  create-release:
-    description: Whether to create a release
+  release-upload-url:
+    description: URL used to upload files to release.
     required: false
-  release-repository:
-    description: Repository to create release for
-    required: false
-  release-name:
-    description: Name of a created release
-    required: false
-  release-tag-name:
-    description: Tag of a created release
-    required: false
-  release-body:
-    description: Body of a created release
-    required: false
-  release-body-path:
-    description: Path to file with a body of a created release
-    required: false
-  release-is-draft:
-    description: Whether a release is a draft
-    required: false
-  release-is-prerelease:
-    description: Whether a release is a prerelease
+  upload-release-files:
+    description: Whether to upload files to release.
+    default: 'false'
     required: false
 runs:
   using: 'node12'

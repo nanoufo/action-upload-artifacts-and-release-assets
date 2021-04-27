@@ -1,5 +1,5 @@
 import * as glob from "@actions/glob";
-import { debug, info } from "@actions/core";
+import { debug } from "@actions/core";
 import { stat } from "fs";
 import { promisify } from "util";
 
