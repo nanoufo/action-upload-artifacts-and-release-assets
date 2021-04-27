@@ -1,13 +1,11 @@
-## action-upload-artifacts-and-release
-This action can upload multiple files individually as artifacts 
-and create a release with the same files.
+## action-upload-artifacts-and-release-files
+This action can upload multiple files individually as artifacts and release files.
 
 ### Example
 Note: for stability of builds it is recommended to use fixed version of this action instead of using head of `main` branch.
 
-In this example two artifacts will be uploaded (if files are present) and a release will
-be created with the same files.
-Passing `GITHUB_TOKEN` is required for a release but is optional for artifact uploads.
+In this example two artifacts will be uploaded (if files are present).
+Passing `GITHUB_TOKEN` is required for release uploads but is optional for artifact uploads.
 ```
       - name: Upload artifact and release
         uses: flying-ufo/action-upload-artifacts-and-release@main
