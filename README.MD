@@ -8,7 +8,7 @@ In this example two artifacts will be uploaded (if files are present).
 Passing `GITHUB_TOKEN` is required for release uploads but is optional for artifact uploads.
 ```
       - name: Upload artifact and release
-        uses: flying-ufo/action-upload-artifacts-and-release@main
+        uses: nanoufo/action-upload-artifacts-and-release-assets@main
         with:
           path: |
             x.txt
