@@ -1,4 +1,4 @@
-## action-upload-artifacts-and-release-files
+## action-upload-artifacts-and-release-assets
 This action can upload multiple files individually as artifacts and release files.
 
 ### Example

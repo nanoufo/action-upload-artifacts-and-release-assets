@@ -1,6 +1,6 @@
-name: 'Upload files'
+name: 'Upload artifacts & release assets'
 description: 'Upload each file individually as an artifact or as a release file'
-author: 'Artur Samarin'
+author: 'nanoufo'
 inputs:
   path:
     description: 'A file or wildcard pattern that describes what to upload'
