@@ -1,6 +1,9 @@
 name: 'Upload artifacts & release assets'
 description: 'Upload each file individually as an artifact or as a release file'
 author: 'nanoufo'
+branding:
+  icon: arrow-up-circle
+  color: orange
 inputs:
   path:
     description: 'A file or wildcard pattern that describes what to upload'
