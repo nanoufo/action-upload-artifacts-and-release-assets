@@ -18,8 +18,7 @@
     "@actions/github": "^2.0.0",
     "@actions/glob": "^0.1.1",
     "@actions/io": "^1.1.0",
-    "mime": "^2.5.2",
-    "upload-artifact": "github:actions/upload-artifact"
+    "mime": "^2.5.2"
   },
   "devDependencies": {
     "@types/node": "^15.0.1",
