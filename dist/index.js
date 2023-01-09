@@ -17693,6 +17693,7 @@ const search_1 = __nccwpck_require__(3930);
 const constants_1 = __nccwpck_require__(9042);
 const artifact_1 = __nccwpck_require__(2605);
 const path_1 = __nccwpck_require__(1017);
+const core_1 = __nccwpck_require__(2186);
 const github = __importStar(__nccwpck_require__(5438));
 const core = __importStar(__nccwpck_require__(2186));
 const releaser_1 = __nccwpck_require__(1254);
@@ -17751,8 +17752,7 @@ async function main() {
         }
     }
     catch (error) {
-        throw error;
-        // setFailed(error instanceof Error ? error : String(error));
+        (0, core_1.setFailed)(error instanceof Error ? error : String(error));
     }
 }
 main();
