@@ -1,17 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
     "outDir": "./lib",
     "rootDir": "./src",
-    "strict": true,
     "noImplicitAny": false,
-    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "declaration": false,
-    "sourceMap": true,
-    "lib": ["es6"]
-  },
-  "exclude": ["node_modules", "**/*.test.ts"]
+    "sourceMap": true
+  }
 }

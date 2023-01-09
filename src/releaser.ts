@@ -1,4 +1,5 @@
-import { GitHub } from "@actions/github";
+import * as github from "@actions/github";
+import * as core from "@actions/core";
 import { lstatSync, readFileSync } from "fs";
 import { getType } from "mime";
 import { basename } from "path";
@@ -24,18 +25,22 @@ export function mimeOrDefault(path: string): string {
 }
 
 export async function uploadReleaseFile(
-  gh: GitHub,
+  gh: ReturnType<typeof github.getOctokit>,
   url: string,
   path: string
 ): Promise<any> {
+  // data has Buffer type but we can't simply pass it to uploadReleaseAsset
+  // because it has wrong type declaration, so we have to use 'as any'.
+  // https://github.com/octokit/octokit.js/discussions/2087
+  // Also uploadReleaseAsset has some other wrong types
   let { name, size, mime, data } = asset(path);
-  return await gh.repos.uploadReleaseAsset({
+  return await gh.rest.repos.uploadReleaseAsset({
     url,
     headers: {
       "content-length": size,
       "content-type": mime,
     },
     name,
-    data,
-  });
+    data: data,
+  } as any);
 }

@@ -1,11 +1,11 @@
-import * as core from "@actions/core";
 import { getInputs } from "./inputs-helper";
 import { findFilesToUpload } from "./search";
 import { NoFileOptions } from "./constants";
 import { create, UploadOptions } from "@actions/artifact";
 import { basename, dirname } from "path";
 import { setFailed } from "@actions/core";
-import { GitHub } from "@actions/github";
+import * as github from "@actions/github";
+import * as core from "@actions/core";
 import { uploadReleaseFile } from "./releaser";
 
 async function main(): Promise<void> {
@@ -69,14 +69,14 @@ async function main(): Promise<void> {
 
     /* Upload release files */
     if (inputs.uploadReleaseFiles) {
-      const gh = new GitHub(inputs.githubToken!, {});
+      const gh = github.getOctokit(inputs.githubToken!);
       for (const path of filesToUpload) {
         core.info(`⬆️ Uploading release file ${basename(path)}...`);
         await uploadReleaseFile(gh, inputs.releaseUploadUrl!, path);
       }
     }
   } catch (error) {
-    setFailed(error.message);
+    setFailed(error instanceof Error ? error : String(error));
   }
 }
 
