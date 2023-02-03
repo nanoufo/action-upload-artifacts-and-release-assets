@@ -34,7 +34,7 @@ const makeEnumInputHelper = <T extends Record<string, string>>(
 ): GetInputHelper<T[keyof T]> => {
   const enumValues = Object.values(enumT);
   return makeInputHelper((valueStr) => {
-    if (!enumValues.indexOf(valueStr)) {
+    if (!enumValues.includes(valueStr)) {
       throw Error("value must be one of " + enumValues.join(", "));
     }
     return valueStr as T[keyof T];
