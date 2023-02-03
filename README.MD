@@ -1,11 +1,14 @@
-## action-upload-artifacts-and-release-assets
+# action-upload-artifacts-and-release-assets
+
 This action can upload multiple files individually as artifacts and release files.
 
-### Example
+## Example
+
 Note: for stability of builds it is recommended to use fixed version of this action instead of using head of `main` branch.
 
 In this example two artifacts will be uploaded (if files are present).
 Passing `GITHUB_TOKEN` is required for release uploads but is optional for artifact uploads.
+
 ```
       - name: Upload artifact and release
         uses: nanoufo/action-upload-artifacts-and-release-assets@main
@@ -19,12 +22,15 @@ Passing `GITHUB_TOKEN` is required for release uploads but is optional for artif
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Inputs
+## Inputs
+
 `boolean` values are case-insensitive and must be either `true`/`yes`/`on` or `false`/`no`/`off`.
 
 | Name | Type | Description |
 | ---- | ---  | ----------- |
 | path | string | _Required_. List of globs that match uploaded files, separated by a newline. Each file that is matched by a glob is uploaded individually, directories are ignored. |
-| if-no-files-found | enum (warn/error/ignore) | Strategy to use where there are no files to upload at least for one line of the path. Default is `warn`. |
+| if-no-files-found | enum (`warn`/`error`/`ignore`) | Strategy to use where there are no files to upload at least for one line of the path. Default is `warn`. |
 | upload-release-files  | boolean | Whether to upload files to release. If `false`, only artifacts will be uploaded. Default is `false`. |
 | release-upload-url  | string | URL to use to upload release files. |
+| retry-limit  | number | The number of retries to make if uploading release files fails (see #5). Default is `3`. Use `0` to disable retries.) |
+| retry-interval  | number | The number of seconds to wait between upload attempts. Default is `3`. |

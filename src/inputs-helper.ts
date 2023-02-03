@@ -2,60 +2,84 @@ import * as core from "@actions/core";
 import { ActionInputs } from "./action-inputs";
 import { Inputs, NoFileOptions } from "./constants";
 import { env } from "process";
+import { InputOptions } from "@actions/core";
 
-function getBooleanInput(name: string): boolean | undefined {
-  const value = getStringInput(name);
-  if (value === undefined) {
-    return undefined;
-  }
+interface GetInputHelper<T> {
+  (name: string, options: InputOptions & { required: true }): T;
+  (name: string, options?: InputOptions): T | undefined;
+}
+
+interface ValueParser<T> {
+  (value: string): T;
+}
+
+const makeInputHelper = <T>(parser: ValueParser<T>): GetInputHelper<T> => {
+  return (name: string, options?: InputOptions): any => {
+    const value = core.getInput(name, options);
+    if (value === "" && options?.required !== true) {
+      // core.getInput returns "" if the value is not defined
+      return undefined;
+    }
+    try {
+      return parser(value);
+    } catch (error) {
+      const errMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Invalid value for ${name}: ${errMessage}`);
+    }
+  };
+};
+
+const makeEnumInputHelper = <T extends Record<string, string>>(
+  enumT: T
+): GetInputHelper<T[keyof T]> => {
+  const enumValues = Object.values(enumT);
+  return makeInputHelper((valueStr) => {
+    if (!enumValues.includes(valueStr)) {
+      throw Error("value must be one of " + enumValues.join(", "));
+    }
+    return valueStr as T[keyof T];
+  });
+};
+
+const getBooleanInput = makeInputHelper((valueStr) => {
   const trueValues = ["true", "yes", "on"];
   const falseValues = ["false", "no", "off"];
-  if (trueValues.indexOf(value.toLowerCase()) >= 0) {
+  if (trueValues.indexOf(valueStr.toLowerCase()) >= 0) {
     return true;
-  } else if (falseValues.indexOf(value.toLowerCase()) >= 0) {
+  } else if (falseValues.indexOf(valueStr.toLowerCase()) >= 0) {
     return false;
   } else {
-    throw Error(`Bad boolean value: ${value}`);
+    throw Error(`bad boolean value: ${valueStr}`);
   }
-}
-
-function getNumberInput(name: string): number | undefined {
-  const value = getStringInput(name);
-  if (value === undefined) {
-    return undefined;
-  }
-  const valueAsNumber = parseInt(value);
+});
+const getNumberInput = makeInputHelper((valueStr) => {
+  const valueAsNumber = parseInt(valueStr);
   if (isNaN(valueAsNumber)) {
-    throw Error(`Invalid number: ${value}`);
+    throw Error(`invalid number: ${valueStr}`);
   }
   return valueAsNumber;
-}
-
-function getStringInput(name: string): string | undefined {
-  return core.getInput(name) || undefined;
-}
-
-function getRequiredStringInput(name: string): string {
-  return core.getInput(name, { required: true });
-}
+});
+const getStringInput = makeInputHelper((valueStr) => valueStr);
+const getNoFilesFoundInput = makeEnumInputHelper(NoFileOptions);
 
 export function getInputs(): ActionInputs {
-  const ifNoFilesFound = core.getInput(Inputs.IfNoFilesFound);
-  const noFileBehavior: NoFileOptions = NoFileOptions[ifNoFilesFound];
-
-  if (!noFileBehavior) {
-    throw Error(
-      `Unrecognized ${Inputs.IfNoFilesFound} input: ${ifNoFilesFound}`
-    );
-  }
-
+  // Note: required means that
+  //   a value must be provided when calling the action
+  //   - OR -
+  //   a default value must be defined in action.yml
   const inputs: ActionInputs = {
     githubToken: env.GITHUB_TOKEN,
-    searchPath: getRequiredStringInput(Inputs.Path),
-    ifNoFilesFound: noFileBehavior,
+    searchPath: getStringInput(Inputs.Path, { required: true }),
+    ifNoFilesFound: getNoFilesFoundInput(Inputs.IfNoFilesFound, {
+      required: true,
+    }),
     retentionDays: getNumberInput(Inputs.RetentionDays),
     releaseUploadUrl: getStringInput(Inputs.ReleaseUploadUrl),
-    uploadReleaseFiles: getBooleanInput(Inputs.UploadReleaseFiles) ?? false,
+    uploadReleaseFiles: getBooleanInput(Inputs.UploadReleaseFiles, {
+      required: true,
+    }),
+    retryLimit: getNumberInput(Inputs.RetryLimit, { required: true }),
+    retryInterval: getNumberInput(Inputs.RetryInterval, { required: true }),
   };
 
   if (inputs.uploadReleaseFiles) {
@@ -63,9 +87,20 @@ export function getInputs(): ActionInputs {
       throw Error(
         `${Inputs.UploadReleaseFiles} is true but GITHUB_TOKEN is not provided`
       );
-    } else if (inputs.releaseUploadUrl === undefined) {
+    }
+    if (inputs.releaseUploadUrl === undefined) {
       throw Error(
         `${Inputs.UploadReleaseFiles} is true but ${Inputs.ReleaseUploadUrl} is not provided`
+      );
+    }
+    if (inputs.retryLimit < 0 || inputs.retryLimit > 10) {
+      throw Error(
+        `${Inputs.RetryLimit} must be between 0 and 10, but it is ${inputs.retryLimit}`
+      );
+    }
+    if (inputs.retryInterval < 1 || inputs.retryInterval > 10) {
+      throw Error(
+        `${Inputs.RetryInterval} must be between 1 and 10, but it is ${inputs.retryInterval}`
       );
     }
   }

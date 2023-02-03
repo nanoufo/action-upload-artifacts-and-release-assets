@@ -17552,6 +17552,8 @@ var Inputs;
     Inputs["RetentionDays"] = "retention-days";
     Inputs["UploadReleaseFiles"] = "upload-release-files";
     Inputs["ReleaseUploadUrl"] = "release-upload-url";
+    Inputs["RetryLimit"] = "retry-limit";
+    Inputs["RetryInterval"] = "retry-interval";
 })(Inputs = exports.Inputs || (exports.Inputs = {}));
 var NoFileOptions;
 (function (NoFileOptions) {
@@ -17596,60 +17598,84 @@ exports.getInputs = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const constants_1 = __nccwpck_require__(9042);
 const process_1 = __nccwpck_require__(7282);
-function getBooleanInput(name) {
-    const value = getStringInput(name);
-    if (value === undefined) {
-        return undefined;
-    }
+const makeInputHelper = (parser) => {
+    return (name, options) => {
+        const value = core.getInput(name, options);
+        if (value === "" && options?.required !== true) {
+            // core.getInput returns "" if the value is not defined
+            return undefined;
+        }
+        try {
+            return parser(value);
+        }
+        catch (error) {
+            const errMessage = error instanceof Error ? error.message : String(error);
+            throw new Error(`Invalid value for ${name}: ${errMessage}`);
+        }
+    };
+};
+const makeEnumInputHelper = (enumT) => {
+    const enumValues = Object.values(enumT);
+    return makeInputHelper((valueStr) => {
+        if (!enumValues.includes(valueStr)) {
+            throw Error("value must be one of " + enumValues.join(", "));
+        }
+        return valueStr;
+    });
+};
+const getBooleanInput = makeInputHelper((valueStr) => {
     const trueValues = ["true", "yes", "on"];
     const falseValues = ["false", "no", "off"];
-    if (trueValues.indexOf(value.toLowerCase()) >= 0) {
+    if (trueValues.indexOf(valueStr.toLowerCase()) >= 0) {
         return true;
     }
-    else if (falseValues.indexOf(value.toLowerCase()) >= 0) {
+    else if (falseValues.indexOf(valueStr.toLowerCase()) >= 0) {
         return false;
     }
     else {
-        throw Error(`Bad boolean value: ${value}`);
+        throw Error(`bad boolean value: ${valueStr}`);
     }
-}
-function getNumberInput(name) {
-    const value = getStringInput(name);
-    if (value === undefined) {
-        return undefined;
-    }
-    const valueAsNumber = parseInt(value);
+});
+const getNumberInput = makeInputHelper((valueStr) => {
+    const valueAsNumber = parseInt(valueStr);
     if (isNaN(valueAsNumber)) {
-        throw Error(`Invalid number: ${value}`);
+        throw Error(`invalid number: ${valueStr}`);
     }
     return valueAsNumber;
-}
-function getStringInput(name) {
-    return core.getInput(name) || undefined;
-}
-function getRequiredStringInput(name) {
-    return core.getInput(name, { required: true });
-}
+});
+const getStringInput = makeInputHelper((valueStr) => valueStr);
+const getNoFilesFoundInput = makeEnumInputHelper(constants_1.NoFileOptions);
 function getInputs() {
-    const ifNoFilesFound = core.getInput(constants_1.Inputs.IfNoFilesFound);
-    const noFileBehavior = constants_1.NoFileOptions[ifNoFilesFound];
-    if (!noFileBehavior) {
-        throw Error(`Unrecognized ${constants_1.Inputs.IfNoFilesFound} input: ${ifNoFilesFound}`);
-    }
+    // Note: required means that
+    //   a value must be provided when calling the action
+    //   - OR -
+    //   a default value must be defined in action.yml
     const inputs = {
         githubToken: process_1.env.GITHUB_TOKEN,
-        searchPath: getRequiredStringInput(constants_1.Inputs.Path),
-        ifNoFilesFound: noFileBehavior,
+        searchPath: getStringInput(constants_1.Inputs.Path, { required: true }),
+        ifNoFilesFound: getNoFilesFoundInput(constants_1.Inputs.IfNoFilesFound, {
+            required: true,
+        }),
         retentionDays: getNumberInput(constants_1.Inputs.RetentionDays),
         releaseUploadUrl: getStringInput(constants_1.Inputs.ReleaseUploadUrl),
-        uploadReleaseFiles: getBooleanInput(constants_1.Inputs.UploadReleaseFiles) ?? false,
+        uploadReleaseFiles: getBooleanInput(constants_1.Inputs.UploadReleaseFiles, {
+            required: true,
+        }),
+        retryLimit: getNumberInput(constants_1.Inputs.RetryLimit, { required: true }),
+        retryInterval: getNumberInput(constants_1.Inputs.RetryInterval, { required: true }),
     };
     if (inputs.uploadReleaseFiles) {
         if (inputs.githubToken === undefined) {
             throw Error(`${constants_1.Inputs.UploadReleaseFiles} is true but GITHUB_TOKEN is not provided`);
         }
-        else if (inputs.releaseUploadUrl === undefined) {
+        if (inputs.releaseUploadUrl === undefined) {
             throw Error(`${constants_1.Inputs.UploadReleaseFiles} is true but ${constants_1.Inputs.ReleaseUploadUrl} is not provided`);
+        }
+        if (inputs.retryLimit < 0 || inputs.retryLimit > 10) {
+            throw Error(`${constants_1.Inputs.RetryLimit} must be between 0 and 10, but it is ${inputs.retryLimit}`);
+        }
+        if (inputs.retryInterval < 1 || inputs.retryInterval > 10) {
+            throw Error(`${constants_1.Inputs.RetryInterval} must be between 1 and 10, but it is ${inputs.retryInterval}`);
         }
     }
     return inputs;
@@ -17746,8 +17772,23 @@ async function main() {
         if (inputs.uploadReleaseFiles) {
             const gh = github.getOctokit(inputs.githubToken);
             for (const path of filesToUpload) {
-                core.info(`⬆️ Uploading release file ${(0, path_1.basename)(path)}...`);
-                await (0, releaser_1.uploadReleaseFile)(gh, inputs.releaseUploadUrl, path);
+                let fileUploaded = false;
+                for (let i = 0; i <= inputs.retryLimit; i++) {
+                    core.info(`⬆️ Uploading release file ${(0, path_1.basename)(path)} (attempt ${i + 1})...`);
+                    try {
+                        await (0, releaser_1.uploadReleaseFile)(gh, inputs.releaseUploadUrl, path);
+                        fileUploaded = true;
+                        break;
+                    }
+                    catch (error) {
+                        core.warning(`Failed to upload release file: ${error}`);
+                        core.info(`Waiting ${inputs.retryInterval} seconds before retrying...`);
+                        await new Promise((resolve) => setTimeout(resolve, inputs.retryInterval * 1000));
+                    }
+                }
+                if (!fileUploaded) {
+                    throw new Error(`Too many failed upload attempts for ${(0, path_1.basename)(path)}, giving up`);
+                }
             }
         }
     }
