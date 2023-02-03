@@ -71,8 +71,16 @@ async function main(): Promise<void> {
     if (inputs.uploadReleaseFiles) {
       const gh = github.getOctokit(inputs.githubToken!);
       for (const path of filesToUpload) {
-        core.info(`⬆️ Uploading release file ${basename(path)}...`);
-        await uploadReleaseFile(gh, inputs.releaseUploadUrl!, path);
+        for (let i = 0; i < inputs.retryLimit; i++) {
+          core.info(`⬆️ Uploading release file ${basename(path)} (attempt ${i+1})...`);
+          try {
+            await uploadReleaseFile(gh, inputs.releaseUploadUrl!, path);
+          } catch (error) {
+            core.warning(`Failed to upload release file: ${error}`);
+            core.info(`Waiting ${inputs.retryInterval} seconds before retrying...`);
+            await new Promise((resolve) => setTimeout(resolve, inputs.retryInterval * 1000));
+          }
+        }
       }
     }
   } catch (error) {

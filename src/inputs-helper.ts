@@ -56,6 +56,8 @@ export function getInputs(): ActionInputs {
     retentionDays: getNumberInput(Inputs.RetentionDays),
     releaseUploadUrl: getStringInput(Inputs.ReleaseUploadUrl),
     uploadReleaseFiles: getBooleanInput(Inputs.UploadReleaseFiles) ?? false,
+    retryLimit: getNumberInput(Inputs.RetryLimit) ?? 3,
+    retryInterval: getNumberInput(Inputs.RetryInterval) ?? 3,
   };
 
   if (inputs.uploadReleaseFiles) {
@@ -63,9 +65,20 @@ export function getInputs(): ActionInputs {
       throw Error(
         `${Inputs.UploadReleaseFiles} is true but GITHUB_TOKEN is not provided`
       );
-    } else if (inputs.releaseUploadUrl === undefined) {
+    }
+    if (inputs.releaseUploadUrl === undefined) {
       throw Error(
         `${Inputs.UploadReleaseFiles} is true but ${Inputs.ReleaseUploadUrl} is not provided`
+      );
+    }
+    if (inputs.retryLimit < 1 || inputs.retryLimit > 10) {
+      throw Error(
+        `${Inputs.RetryLimit} must be between 1 and 10, but it is ${inputs.retryLimit}`
+      );
+    }
+    if (inputs.retryInterval < 1 || inputs.retryInterval > 10) {
+      throw Error(
+        `${Inputs.RetryInterval} must be between 1 and 10, but it is ${inputs.retryInterval}`
       );
     }
   }

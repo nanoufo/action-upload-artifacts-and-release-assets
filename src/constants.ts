@@ -4,6 +4,8 @@ export enum Inputs {
   RetentionDays = "retention-days",
   UploadReleaseFiles = "upload-release-files",
   ReleaseUploadUrl = "release-upload-url",
+  RetryLimit = "retry-limit",
+  RetryInterval = "retry-interval",
 }
 
 export enum NoFileOptions {
