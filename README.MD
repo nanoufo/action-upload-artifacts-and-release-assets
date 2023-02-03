@@ -29,8 +29,8 @@ Passing `GITHUB_TOKEN` is required for release uploads but is optional for artif
 | Name | Type | Description |
 | ---- | ---  | ----------- |
 | path | string | _Required_. List of globs that match uploaded files, separated by a newline. Each file that is matched by a glob is uploaded individually, directories are ignored. |
-| if-no-files-found | enum (warn/error/ignore) | Strategy to use where there are no files to upload at least for one line of the path. Default is `warn`. |
+| if-no-files-found | enum (`warn`/`error`/`ignore`) | Strategy to use where there are no files to upload at least for one line of the path. Default is `warn`. |
 | upload-release-files  | boolean | Whether to upload files to release. If `false`, only artifacts will be uploaded. Default is `false`. |
 | release-upload-url  | string | URL to use to upload release files. |
-| retry-limit  | number | The number of times to attempt to upload files if a call fails. (Default: 3) |
-| retry-interval  | number | The number of seconds to wait between upload attempts. (Default: 3) |
+| retry-limit  | number | The number of retries to make if uploading release files fails (see #5). Default is `3`. Use `0` to disable retries.) |
+| retry-interval  | number | The number of seconds to wait between upload attempts. Default is `3`. |
