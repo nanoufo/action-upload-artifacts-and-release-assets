@@ -17778,6 +17778,7 @@ async function main() {
                     try {
                         await (0, releaser_1.uploadReleaseFile)(gh, inputs.releaseUploadUrl, path);
                         fileUploaded = true;
+                        break;
                     }
                     catch (error) {
                         core.warning(`Failed to upload release file: ${error}`);

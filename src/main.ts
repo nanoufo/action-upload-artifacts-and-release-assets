@@ -79,6 +79,7 @@ async function main(): Promise<void> {
           try {
             await uploadReleaseFile(gh, inputs.releaseUploadUrl!, path);
             fileUploaded = true;
+            break
           } catch (error) {
             core.warning(`Failed to upload release file: ${error}`);
             core.info(
