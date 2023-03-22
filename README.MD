@@ -11,6 +11,8 @@ In this example two artifacts will be uploaded (if files are present).
 ```yaml
 - name: Upload artifact and release
   uses: nanoufo/action-upload-artifacts-and-release-assets@main
+  permissions:
+    contents: write
   with:
     path: |
       x.txt
