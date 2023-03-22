@@ -10,15 +10,23 @@ In this example two artifacts will be uploaded (if files are present).
 
 ```yaml
 - name: Upload artifact and release
-  uses: nanoufo/action-upload-artifacts-and-release-assets@main
-  permissions:
-    contents: write
+  uses: nanoufo/action-upload-artifacts-and-release-assets@main  
   with:
     path: |
       x.txt
       y.txt
     upload-release-files: true
     release-upload-url: <UPLOAD URL HERE>
+```
+
+## Permissions
+The following job permissions are required for this action if you need to upload release assets.
+You may add the following lines [to the job or workflow](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs) if you want to follow the principle of least privilege, by default such permissions are provided.
+
+```
+# optional: add to the job entry
+permissions:
+  contents: write
 ```
 
 ## Inputs
