@@ -6,6 +6,7 @@ export enum Inputs {
   ReleaseUploadUrl = "release-upload-url",
   RetryLimit = "retry-limit",
   RetryInterval = "retry-interval",
+  GithubToken = "github-token",
 }
 
 export enum NoFileOptions {

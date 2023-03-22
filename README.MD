@@ -7,19 +7,18 @@ This action can upload multiple files individually as artifacts and release file
 Note: for stability of builds it is recommended to use fixed version of this action instead of using head of `main` branch.
 
 In this example two artifacts will be uploaded (if files are present).
-Passing `GITHUB_TOKEN` is required for release uploads but is optional for artifact uploads.
 
-```
-      - name: Upload artifact and release
-        uses: nanoufo/action-upload-artifacts-and-release-assets@main
-        with:
-          path: |
-            x.txt
-            y.txt
-          upload-release-files: true
-          release-upload-url: <UPLOAD URL HERE>
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```yaml
+- name: Upload artifact and release
+  uses: nanoufo/action-upload-artifacts-and-release-assets@main
+  permissions:
+    contents: write
+  with:
+    path: |
+      x.txt
+      y.txt
+    upload-release-files: true
+    release-upload-url: <UPLOAD URL HERE>
 ```
 
 ## Inputs
@@ -34,3 +33,4 @@ Passing `GITHUB_TOKEN` is required for release uploads but is optional for artif
 | release-upload-url  | string | URL to use to upload release files. |
 | retry-limit  | number | The number of retries to make if uploading release files fails (see #5). Default is `3`. Use `0` to disable retries.) |
 | retry-interval  | number | The number of seconds to wait between upload attempts. Default is `3`. |
+| github-token    | string | GitHub token to use for uploading release files. By default, it uses the built-in token, but it can be changed to a custom PAT. |

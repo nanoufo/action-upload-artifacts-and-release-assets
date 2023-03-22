@@ -68,7 +68,7 @@ export function getInputs(): ActionInputs {
   //   - OR -
   //   a default value must be defined in action.yml
   const inputs: ActionInputs = {
-    githubToken: env.GITHUB_TOKEN,
+    githubToken: getStringInput(Inputs.GithubToken),
     searchPath: getStringInput(Inputs.Path, { required: true }),
     ifNoFilesFound: getNoFilesFoundInput(Inputs.IfNoFilesFound, {
       required: true,

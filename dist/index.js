@@ -17554,6 +17554,7 @@ var Inputs;
     Inputs["ReleaseUploadUrl"] = "release-upload-url";
     Inputs["RetryLimit"] = "retry-limit";
     Inputs["RetryInterval"] = "retry-interval";
+    Inputs["GithubToken"] = "github-token";
 })(Inputs = exports.Inputs || (exports.Inputs = {}));
 var NoFileOptions;
 (function (NoFileOptions) {
@@ -17597,7 +17598,6 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getInputs = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const constants_1 = __nccwpck_require__(9042);
-const process_1 = __nccwpck_require__(7282);
 const makeInputHelper = (parser) => {
     return (name, options) => {
         const value = core.getInput(name, options);
@@ -17651,7 +17651,7 @@ function getInputs() {
     //   - OR -
     //   a default value must be defined in action.yml
     const inputs = {
-        githubToken: process_1.env.GITHUB_TOKEN,
+        githubToken: getStringInput(constants_1.Inputs.GithubToken),
         searchPath: getStringInput(constants_1.Inputs.Path, { required: true }),
         ifNoFilesFound: getNoFilesFoundInput(constants_1.Inputs.IfNoFilesFound, {
             required: true,
@@ -17998,14 +17998,6 @@ module.exports = require("path");
 
 "use strict";
 module.exports = require("perf_hooks");
-
-/***/ }),
-
-/***/ 7282:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("process");
 
 /***/ }),
 
