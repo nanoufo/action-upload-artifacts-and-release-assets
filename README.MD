@@ -21,7 +21,7 @@ In this example two artifacts will be uploaded (if files are present).
 
 ## Permissions
 The following job permissions are required for this action if you need to upload release assets.
-You may add the following lines [to the job or workflow](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs) if you want to follow the principle of least privilege, by default such permissions are provided.
+You have to add the following lines [to the job or workflow](https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs) or enable read-write access for all workflows in the actions tab of the repository settings.
 
 ```
 # optional: add to the job entry
