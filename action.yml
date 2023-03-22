@@ -48,6 +48,10 @@ inputs:
       Maximum 10.
     default: '3'
     required: false
+  github-token:
+    description: 'GitHub token to use for authentication'
+    required: false
+    default: ${{ github.token }}
 runs:
   using: 'node16'
   main: 'dist/index.js'
