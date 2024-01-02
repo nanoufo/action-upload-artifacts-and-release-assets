@@ -17555,13 +17555,13 @@ var Inputs;
     Inputs["RetryLimit"] = "retry-limit";
     Inputs["RetryInterval"] = "retry-interval";
     Inputs["GithubToken"] = "github-token";
-})(Inputs = exports.Inputs || (exports.Inputs = {}));
+})(Inputs || (exports.Inputs = Inputs = {}));
 var NoFileOptions;
 (function (NoFileOptions) {
     NoFileOptions["warn"] = "warn";
     NoFileOptions["error"] = "error";
     NoFileOptions["ignore"] = "ignore";
-})(NoFileOptions = exports.NoFileOptions || (exports.NoFileOptions = {}));
+})(NoFileOptions || (exports.NoFileOptions = NoFileOptions = {}));
 
 
 /***/ }),
