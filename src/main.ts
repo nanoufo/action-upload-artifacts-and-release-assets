@@ -1,7 +1,7 @@
 import { getInputs } from "./inputs-helper";
 import { findFilesToUpload } from "./search";
 import { NoFileOptions } from "./constants";
-import { create, UploadOptions } from "@actions/artifact";
+import artifact, { UploadArtifactOptions } from "@actions/artifact";
 import { basename, dirname } from "path";
 import { setFailed } from "@actions/core";
 import * as github from "@actions/github";
@@ -50,16 +50,15 @@ async function main(): Promise<void> {
     );
 
     /* Upload artifacts */
-    const artifactClient = create();
-    const options: UploadOptions = {
-      continueOnError: false,
+    const options: UploadArtifactOptions = {
       retentionDays: inputs.retentionDays,
+      compressionLevel: inputs.compressionLevel,
     };
     for (const file of filesToUpload) {
       const rootDirectory = dirname(file);
       const artifactName = basename(file);
       core.info(`⬆️ Uploading artifact ${artifactName}...`);
-      await artifactClient.uploadArtifact(
+      await artifact.uploadArtifact(
         artifactName,
         Array(file),
         rootDirectory,

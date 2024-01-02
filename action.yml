@@ -25,6 +25,17 @@ inputs:
       Minimum 1 day.
       Maximum 90 days unless changed from the repository settings page.
     required: false
+  compression-level:
+    description: >
+      The level of compression for Zlib to be applied to the artifact archive.
+      The value can range from 0 to 9:
+      - 0: No compression
+      - 1: Best speed
+      - 6: Default compression (same as GNU Gzip)
+      - 9: Best compression
+      Higher levels will result in better compression, but will take longer to complete.
+      For large files that are not easily compressed, a value of 0 is recommended for significantly faster uploads.
+    default: '6'
   release-upload-url:
     description: URL used to upload files to release.
     required: false

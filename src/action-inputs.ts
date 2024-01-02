@@ -6,6 +6,7 @@ export interface ActionInputs {
   searchPath: string;
   ifNoFilesFound: NoFileOptions;
   retentionDays: number | undefined;
+  compressionLevel: number | undefined;
   uploadReleaseFiles: boolean;
   releaseUploadUrl: string | undefined;
 
