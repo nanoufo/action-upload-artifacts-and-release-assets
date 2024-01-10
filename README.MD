@@ -4,13 +4,11 @@ This action can upload multiple files individually as artifacts and release file
 
 ## Example
 
-Note: for stability of builds it is recommended to use fixed version of this action instead of using head of `main` branch.
-
-In this example two artifacts will be uploaded (if files are present).
+In this example two artifacts and two release assets will be uploaded (if files are present).
 
 ```yaml
-- name: Upload artifact and release
-  uses: nanoufo/action-upload-artifacts-and-release-assets@main  
+- name: Upload artifacts and release assets
+  uses: nanoufo/action-upload-artifacts-and-release-assets@v2
   with:
     path: |
       x.txt
