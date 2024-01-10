@@ -74,6 +74,7 @@ export function getInputs(): ActionInputs {
       required: true,
     }),
     retentionDays: getNumberInput(Inputs.RetentionDays),
+    compressionLevel: getNumberInput(Inputs.CompressionLevel),
     releaseUploadUrl: getStringInput(Inputs.ReleaseUploadUrl),
     uploadReleaseFiles: getBooleanInput(Inputs.UploadReleaseFiles, {
       required: true,
